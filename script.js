@@ -1,5 +1,6 @@
 var ApiKey ="14b5cabc2d7694d48a856a43219531d0"
 var citySearch = document.getElementById('submit');
+var clearLS = document.getElementById('reset')
 
 //  var long = ;
 //  var lat = ;
@@ -16,6 +17,10 @@ function getGeocode(event){
  var city =localStorage.getItem('city'); 
  console.log(city);
  event.preventDefault();
+
+ var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+  searchHistory.push(city);
+  localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
  
  var geoCodeUrl ='http://api.openweathermap.org/geo/1.0/direct?q='+city+'&limit=5&appid='+ApiKey;
     fetch(geoCodeUrl)
@@ -31,7 +36,8 @@ function getGeocode(event){
         var lon = data[0].lon;
         localStorage.setItem("lon",lon)
         console.log(data[0].lon);
-
+        
+        showSearchHistory();
         getTemp();
 
       }
@@ -68,6 +74,28 @@ function getTemp(){
 
 
 citySearch.addEventListener("click",getGeocode);
+
+function showSearchHistory() {
+    var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+    var historyList = document.getElementById('searchHistory');
+    historyList.innerHTML = '';
+  
+    for (var i = 0; i < searchHistory.length; i++) {
+      var listItem = document.createElement('li');
+      listItem.textContent = searchHistory[i];
+      historyList.appendChild(listItem);
+    }
+  }
+  
+  // Call showSearchHistory initially to display the existing search history
+  showSearchHistory();
+
+  clearLS.addEventListener('click',function clearLocal(){
+    localStorage.clear();
+  }
+);
+  
+
  
 
  
