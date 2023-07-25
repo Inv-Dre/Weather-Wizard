@@ -21,7 +21,7 @@ function getGeocode(event){
  var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
   searchHistory.push(city);
   localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
- 
+ console.log(searchHistory)
  var geoCodeUrl ='http://api.openweathermap.org/geo/1.0/direct?q='+city+'&limit=5&appid='+ApiKey;
     fetch(geoCodeUrl)
     .then(function (response) {
@@ -39,7 +39,7 @@ function getGeocode(event){
         
         showSearchHistory();
         getTemp();
-
+        
       }
     else(alert(error))})
   
@@ -56,21 +56,27 @@ function getTemp(){
         return response.json();
     })
     .then(function(data){
+        for (let index = 0; index < 6; index++) {
         console.log(data)
-        var temp = data.list[0].main.temp;
+        var temp = data.list[index].main.temp;
         localStorage.setItem('temp',temp);
-        console.log(data.list[0].main.temp)
-        var wind = data.list[0].wind.speed;
+        console.log(data.list[index].main.temp)
+        var wind = data.list[index].wind.speed;
         localStorage.setItem('wind',wind);
-        console.log(data.list[0].wind.speed);
-        var humidity = data.list[0].main.humidity;
+        console.log(data.list[index].wind.speed);
+        var humidity = data.list[index].main.humidity;
         localStorage.setItem('humidity',humidity);
-        console.log(data.list[0].main.humidity);
-    })
+        console.log(data.list[index].main.humidity);
+        
+     
+        
+}})
     .catch(function(error){
         console.error("error fetching data:", error)
     })
 };
+
+
 
 
 citySearch.addEventListener("click",getGeocode);
@@ -81,10 +87,21 @@ function showSearchHistory() {
     historyList.innerHTML = '';
   
     for (var i = 0; i < searchHistory.length; i++) {
+      var listButton = document.createElement('button');
       var listItem = document.createElement('li');
+      listButton.setAttribute('id','search-list');
+      var fillSearch = document.getElementById('search-list')
+      listButton.append(listItem);
       listItem.textContent = searchHistory[i];
-      historyList.appendChild(listItem);
+      historyList.appendChild(listButton);
     }
+    function searchAgain(event){
+   
+      if(event){
+        getGeocode(listItem.textContent);
+      }
+    }
+    fillSearch.addEventListener('click',searchAgain);
   }
   
   // Call showSearchHistory initially to display the existing search history
@@ -96,7 +113,6 @@ function showSearchHistory() {
 );
   
 
- 
 
  
  
