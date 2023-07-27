@@ -1,6 +1,9 @@
 var ApiKey ="14b5cabc2d7694d48a856a43219531d0"
 var citySearch = document.getElementById('submit');
-var clearLS = document.getElementById('reset')
+var clearLS = document.getElementById('reset');
+var data = {temp:"",
+wind:"",
+humidity:''}
 
 //  var long = ;
 //  var lat = ;
@@ -16,7 +19,13 @@ function getGeocode(event){
  localStorage.setItem('city',inputVal);
  var city =localStorage.getItem('city'); 
  console.log(city);
+
  event.preventDefault();
+
+ if(inputVal===""){
+  alert("enter valid city")
+  return;
+ }
 
  var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
   searchHistory.push(city);
@@ -25,8 +34,8 @@ function getGeocode(event){
  var geoCodeUrl ='http://api.openweathermap.org/geo/1.0/direct?q='+city+'&limit=5&appid='+ApiKey;
     fetch(geoCodeUrl)
     .then(function (response) {
-        return response.json();
-      })
+    return response.json();
+  })
     .then(function (data) {
         if(data){
         console.log(data);
@@ -39,12 +48,13 @@ function getGeocode(event){
         
         showSearchHistory();
         getTemp();
-        
+       
       }
     else(alert(error))})
   
     
 };
+
 
 function getTemp(){
     var lat = localStorage.getItem("lat");
@@ -56,19 +66,20 @@ function getTemp(){
         return response.json();
     })
     .then(function(data){
+      console.log(data)
         for (let index = 0; index < 6; index++) {
-        console.log(data)
-        var temp = data.list[index].main.temp;
-        localStorage.setItem('temp',temp);
+        
+        temp = data.list[index].main.temp;
+        tempObj=temp.value
+        localStorage.setItem('temp',tempObj);
         console.log(data.list[index].main.temp)
-        var wind = data.list[index].wind.speed;
+        wind = data.list[index].wind.speed;
         localStorage.setItem('wind',wind);
         console.log(data.list[index].wind.speed);
-        var humidity = data.list[index].main.humidity;
+        humidity = data.list[index].main.humidity;
         localStorage.setItem('humidity',humidity);
         console.log(data.list[index].main.humidity);
-        
-     
+
         
 }})
     .catch(function(error){
@@ -90,19 +101,14 @@ function showSearchHistory() {
       var listButton = document.createElement('button');
       var listItem = document.createElement('li');
       listButton.setAttribute('id','search-list');
-      var fillSearch = document.getElementById('search-list')
       listButton.append(listItem);
       listItem.textContent = searchHistory[i];
       historyList.appendChild(listButton);
+      
+      listButton.addEventListener('click',function(event){ 
+      getGeocode(event.target.textContent);});
     }
-    function searchAgain(event){
-   
-      if(event){
-        getGeocode(listItem.textContent);
-      }
-    }
-    fillSearch.addEventListener('click',searchAgain);
-  }
+  };
   
   // Call showSearchHistory initially to display the existing search history
   showSearchHistory();
