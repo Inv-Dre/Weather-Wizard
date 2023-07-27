@@ -27,7 +27,7 @@ function getGeocode(event) {
   localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
   console.log(searchHistory);
   var geoCodeUrl =
-    "http://api.openweathermap.org/geo/1.0/direct?q=" +
+    "https://api.openweathermap.org/geo/1.0/direct?q=" +
     city +
     "&limit=5&appid=" +
     ApiKey;
